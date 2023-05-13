@@ -9,7 +9,7 @@ const SideNav = () => {
 
   return (
     <nav className="sticky top-0 px-2 py-4">
-      <ul className="flex flex-col  gap-2 whitespace-nowrap">
+      <ul className="flex flex-col gap-2 whitespace-nowrap">
         <li>
           <Link href="/">
             <IconHoverEffect>

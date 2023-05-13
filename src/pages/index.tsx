@@ -5,14 +5,21 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { api } from "~/utils/api";
 import { useState } from "react";
+import NewTweetForm from "~/components/NewTweetForm";
 
-const TABS = ["Recent", "Following"] as const;
+// const TABS = ["Recent", "Following"] as const;
+
+enum TABS {
+  Recent = "Recent",
+  Following = "Following",
+}
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
-  const [selectedTab, setSelectedTab] =
-    useState<(typeof TABS)[number]>("Recent");
+  // const [selectedTab, setSelectedTab] =
+  //   useState<(typeof TABS)[number]>("Recent");
+  const [selectedTab, setSelectedTab] = useState<TABS>(TABS.Recent);
   const session = useSession();
   return (
     <>
@@ -20,7 +27,8 @@ const Home: NextPage = () => {
         <h1 className="mb-2 px-4 text-lg font-bold">Home</h1>
         {session.status === "authenticated" && (
           <div className="flex">
-            {TABS.map((tab) => {
+            {/* {TABS.map((tab) => { */}
+            {Object.values(TABS).map((tab) => {
               return (
                 <button
                   key={tab}
@@ -38,6 +46,7 @@ const Home: NextPage = () => {
           </div>
         )}
       </header>
+      <NewTweetForm />
     </>
   );
 };
