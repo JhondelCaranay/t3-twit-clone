@@ -1,16 +1,18 @@
-import { number } from "zod";
 import { RouterOutputs } from "~/utils/api";
 import { LoadingSpinner } from "./LoadingSpinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+import TweetCard from "./TweetCard";
 
-type InfiniteTweet = RouterOutputs["tweet"]["infiniteFeed"]["tweets"];
+type Tweet = RouterOutputs["tweet"]["infiniteFeed"]["tweets"][number];
 
 type InfiniteTweetListProps = {
-  tweets?: InfiniteTweet;
+  tweets?: Tweet[];
   isLoading: boolean;
   isError: boolean;
   hasMore: boolean | undefined;
   fetchNewTweets: () => Promise<unknown>;
 };
+
 const InfiniteTweetList = ({
   tweets,
   isLoading,
@@ -27,6 +29,19 @@ const InfiniteTweetList = ({
     );
   }
 
-  return <div>InfiniteTweetList</div>;
+  return (
+    <ul>
+      <InfiniteScroll
+        dataLength={tweets.length}
+        next={fetchNewTweets}
+        hasMore={hasMore ?? false}
+        loader={<LoadingSpinner />}
+      >
+        {tweets.map((tweet) => {
+          return <TweetCard key={tweet.id} {...tweet} />;
+        })}
+      </InfiniteScroll>
+    </ul>
+  );
 };
 export default InfiniteTweetList;

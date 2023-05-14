@@ -49,6 +49,7 @@ const NewTweetForm = (props: Props) => {
 
     if (!result.success) {
       console.log(result.error.issues.map((issue) => issue.message));
+      alert(`Error: ${result.error.issues.map((issue) => issue.message)}`);
       return;
     }
 
