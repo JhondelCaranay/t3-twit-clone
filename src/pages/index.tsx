@@ -6,6 +6,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import NewTweetForm from "~/components/NewTweetForm";
+import InfiniteTweetList from "~/components/InfiniteTweetList";
 
 // const TABS = ["Recent", "Following"] as const;
 
@@ -15,8 +16,6 @@ enum TABS {
 }
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   // const [selectedTab, setSelectedTab] =
   //   useState<(typeof TABS)[number]>("Recent");
   const [selectedTab, setSelectedTab] = useState<TABS>(TABS.Recent);
@@ -47,11 +46,30 @@ const Home: NextPage = () => {
         )}
       </header>
       <NewTweetForm />
+      {selectedTab === TABS.Recent ? <RecentTweets /> : <>Following Tweets</>}
     </>
   );
 };
 
 export default Home;
+
+const RecentTweets = () => {
+  const tweets = api.tweet.infiniteFeed.useInfiniteQuery(
+    { onlyFollowing: true },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
+  );
+
+  const tweetList = tweets.data?.pages.flatMap((page) => page.tweets);
+  return (
+    <InfiniteTweetList
+      tweets={tweetList}
+      isError={tweets.isError}
+      isLoading={tweets.isLoading}
+      hasMore={tweets.hasNextPage}
+      fetchNewTweets={tweets.fetchNextPage}
+    />
+  );
+};
 
 // const AuthShowcase: React.FC = () => {
 //   const { data: sessionData } = useSession();

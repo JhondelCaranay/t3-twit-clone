@@ -2,6 +2,8 @@ import { useSession } from "next-auth/react";
 import { ProfileImage } from "./ProfileImage";
 import Button from "./Button";
 import React, { useCallback, useRef, useState, useLayoutEffect } from "react";
+import { api } from "~/utils/api";
+import { createTweetSchema } from "~/types/tweet";
 React.useLayoutEffect = React.useEffect;
 
 function updateTextAreaSize(textArea?: HTMLTextAreaElement) {
@@ -32,10 +34,25 @@ const NewTweetForm = (props: Props) => {
     updateTextAreaSize(textAreaRef.current);
   }, [inputValue]);
 
+  const createTweet = api.tweet.create.useMutation({
+    onSuccess: (data) => {
+      setInputValue("");
+    },
+  });
+
   if (session.status !== "authenticated") return null;
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    const result = createTweetSchema.safeParse({ content: inputValue });
+
+    if (!result.success) {
+      console.log(result.error.issues.map((issue) => issue.message));
+      return;
+    }
+
+    createTweet.mutate(result.data);
   }
 
   return (
