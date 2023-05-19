@@ -17,7 +17,7 @@ const InfiniteTweetList = ({
   tweets,
   isLoading,
   isError,
-  hasMore,
+  hasMore = false,
   fetchNewTweets,
 }: InfiniteTweetListProps) => {
   if (isLoading) return <LoadingSpinner />;
@@ -34,7 +34,7 @@ const InfiniteTweetList = ({
       <InfiniteScroll
         dataLength={tweets.length}
         next={fetchNewTweets}
-        hasMore={hasMore ?? false}
+        hasMore={hasMore}
         loader={<LoadingSpinner />}
       >
         {tweets.map((tweet) => {
