@@ -46,7 +46,7 @@ const Home: NextPage = () => {
         )}
       </header>
       <NewTweetForm />
-      {selectedTab === TABS.Recent ? <RecentTweets /> : <>Following Tweets</>}
+      {selectedTab === TABS.Recent ? <RecentTweets /> : <FollowingTweets />}
     </>
   );
 };
@@ -55,7 +55,7 @@ export default Home;
 
 const RecentTweets = () => {
   const tweets = api.tweet.infiniteFeed.useInfiniteQuery(
-    { onlyFollowing: true },
+    {},
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
 
@@ -70,6 +70,23 @@ const RecentTweets = () => {
     />
   );
 };
+
+function FollowingTweets() {
+  const tweets = api.tweet.infiniteFeed.useInfiniteQuery(
+    { onlyFollowing: true },
+    { getNextPageParam: (lastPage) => lastPage.nextCursor }
+  );
+
+  return (
+    <InfiniteTweetList
+      tweets={tweets.data?.pages.flatMap((page) => page.tweets)}
+      isError={tweets.isError}
+      isLoading={tweets.isLoading}
+      hasMore={tweets.hasNextPage}
+      fetchNewTweets={tweets.fetchNextPage}
+    />
+  );
+}
 
 // const AuthShowcase: React.FC = () => {
 //   const { data: sessionData } = useSession();
