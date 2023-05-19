@@ -99,10 +99,10 @@ const TweetCard = ({
         { onlyFollowing: true },
         updateData
       );
-      // trpcUtils.tweet.infiniteProfileFeed.setInfiniteData(
-      //   { userId: user.id },
-      //   updateData
-      // );
+      trpcUtils.tweet.infiniteProfileFeed.setInfiniteData(
+        { userId: user.id },
+        updateData
+      );
     },
   });
 
