@@ -89,14 +89,22 @@ export const tweetRouter = createTRPCRouter({
     ),
   create: protectedProcedure
     .input(createTweetSchema)
-    .mutation(async ({ ctx: { prisma, session }, input: { content } }) => {
-      return await prisma.tweet.create({
-        data: {
-          content: content,
-          userId: session.user.id,
-        },
-      });
-    }),
+    .mutation(
+      async ({
+        ctx: { prisma, session, revalidateSSG },
+        input: { content },
+      }) => {
+        const tweet = await prisma.tweet.create({
+          data: {
+            content: content,
+            userId: session.user.id,
+          },
+        });
+        void revalidateSSG?.(`/profiles/${session.user.id}`);
+
+        return tweet;
+      }
+    ),
   toggleLike: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input: { id }, ctx }) => {
